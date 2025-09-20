@@ -19,6 +19,7 @@
 
 // now with parameter packs this becomes simpler
 // in C++11 we will use recursive variadic templates
+
 void print_values() {
   std::cout << std::endl;
 }
