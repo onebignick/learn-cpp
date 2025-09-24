@@ -53,18 +53,18 @@ static_assert(std::is_same_v<Vector<1,2>, Vector<1,2>>);
  * See main() below.
  */
 
-void print() {
+void print(Vector<>) {
   std::cout << std::endl;
 }
 
-template<int Left, int... Right>
-void print(Vector<Left, Right...>) {
-  std::cout << Left;
-  if (sizeof...(Right) > 0) {
-      std::cout << ", ";
+template <int First, int... Rest>
+void print(Vector<First, Rest...>) {
+  std::cout << First;
+  if (sizeof...(Rest) > 0) {
+    std::cout << " ";
   }
-
-  print(Vector<Right...>{});
+  
+  print(Vector<Rest...>{});
 }
 
 
