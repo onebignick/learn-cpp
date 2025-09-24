@@ -1,6 +1,5 @@
 #include <iostream>
 #include <list>
-#include <optional>
 #include <unordered_map>
 
 struct CacheEntry {
@@ -36,12 +35,12 @@ public:
     }
   }
 
-  std::optional<CacheEntry> get(int key) {
+  CacheEntry* get(int key) {
     auto it = cache.find(key);
-    if (it == cache.end()) return std::nullopt;
+    if (it == cache.end()) return nullptr;
 
     entries.splice(entries.end(), entries, it->second);
-    return *it->second;
+    return &(*it->second);
   }
 };
 
@@ -53,7 +52,7 @@ int main() {
   test.put(3, 3);
   
   auto result = test.get(1);
-  if (result.has_value()) std::cout << result->key << " " << result->value << std::endl;
+  if (result) std::cout << result->key << " " << result->value << std::endl;
   else std::cout << "No result" << std::endl;
 
   std::cout << "Expected value: 1 1" << std::endl;
@@ -61,13 +60,13 @@ int main() {
   test.put(4, 4);
 
   result = test.get(2);
-  if (result.has_value()) std::cout << result->key << " " << result->value << std::endl;
+  if (result) std::cout << result->key << " " << result->value << std::endl;
   else std::cout << "No result" << std::endl;
 
   std::cout << "Expected value: No result" << std::endl;
 
   result = test.get(1);
-  if (result.has_value()) std::cout << result->key << " " << result->value << std::endl;
+  if (result) std::cout << result->key << " " << result->value << std::endl;
   else std::cout << "No result" << std::endl;
 
   std::cout << "Expected value: 1 1" << std::endl;
