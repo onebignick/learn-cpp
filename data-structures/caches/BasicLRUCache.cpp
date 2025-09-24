@@ -18,19 +18,20 @@ public:
   BasicLRUCache(int max_entries) : m_max_entries(max_entries) {}
 
   void put(int key, int value) {
-    if (cache.find(key) != cache.end()) {
-      entries.splice(entries.end(), entries, cache[key]);
+    auto it = cache.find(key);
+    if (it != cache.end()) {
+      it->second->value = value;
+      entries.splice(entries.end(), entries, it->second);
       return;
     }
 
-    CacheEntry new_entry;
-    new_entry.key = key;
-    new_entry.value = value;
-
+    CacheEntry new_entry{key, value};
     entries.push_back(new_entry);
     cache[key] = std::prev(entries.end());
+
     while (entries.size() > m_max_entries) {
-      cache.erase(entries.front().key);
+      auto to_remove = entries.begin();
+      cache.erase(to_remove->key);
       entries.pop_front();
     }
   }
@@ -39,8 +40,8 @@ public:
     auto it = cache.find(key);
     if (it == cache.end()) return std::nullopt;
 
-    entries.splice(entries.end(), entries, cache[key]);
-    return *cache[key];
+    entries.splice(entries.end(), entries, it->second);
+    return *it->second;
   }
 };
 
