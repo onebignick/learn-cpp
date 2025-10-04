@@ -5,28 +5,22 @@
 #include <iostream>
 
 int main(int argc, char** argv) {
-  bool find_byte = false;
-  bool find_lines = false;
-  bool find_words = false;
-  bool find_chars = false;
+  int flag_mask = 0;
   for(int i = 0; i < argc; i++) {
-    if (std::string(argv[i]) == "-c") find_byte = true;
-    if (std::string(argv[i]) == "-l") find_lines = true;
-    if (std::string(argv[i]) == "-w") find_words = true;
-    if (std::string(argv[i]) == "-m") find_chars = true;
+    std::string str_cmp = argv[i];
+    if (str_cmp == "-c") flag_mask |= 1 << 0;
+    if (str_cmp == "-l") flag_mask |= 1 << 1;
+    if (str_cmp == "-w") flag_mask |= 1 << 2;
+    if (str_cmp == "-m") flag_mask |= 1 << 3;
   }
 
   // default args
-  if (!(find_byte | find_lines | find_words | find_chars)) {
-    find_byte = true;
-    find_lines = true;
-    find_words = true;
-  }
+  if (flag_mask == 0) flag_mask |= (1 << 3) - 1;
 
   std::string filename = argv[argc - 1];
   std::ifstream infile(filename, std::ios::binary);
   
-  if (find_lines) {
+  if ((flag_mask >> 0) & 1) {
     infile.seekg(0);
     int res = 0;
     std::string line;
@@ -36,7 +30,7 @@ int main(int argc, char** argv) {
     std::cout << res << " ";
   }
 
-  if (find_words) {
+  if ((flag_mask >> 1) & 1) {
     infile.clear();
     infile.seekg(0, std::ios::beg);
 
@@ -48,14 +42,14 @@ int main(int argc, char** argv) {
     std::cout << res << " ";
   }
 
-  if (find_byte) {
+  if ((flag_mask >> 2) & 1) {
     infile.clear();
     infile.seekg(0, std::ios::end);
     int res = infile.tellg();
     std::cout << res << " ";
   }
 
-  if (find_chars) {
+  if ((flag_mask >> 3) & 1) {
     std::istreambuf_iterator<char> it(infile), end;
     int res = 0;
 
